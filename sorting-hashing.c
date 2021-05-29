@@ -286,55 +286,61 @@ int shellSort(int *a)
 			{
 				v = a[j];
 				k = j;
-				while (k > h-1 && a[k-h] > v)
+				while (k > h-1 && a[k-h] > v) //a[j]와 a[j-h]비교
 				{
-					a[k] = a[k-h];
-					k -= h;
+					a[k] = a[k-h]; //a[j]=a[j-h], 큰 값을 a[j]로
+					k -= h; //큰 값이 있던 자리를 k로 하여 그 앞에 값이 있으면 비교반복
 				}
-				a[k] = v;
+				a[k] = v; //비교한 두 배열 교환
 			}
 		}
 	}
 	printf("----------------------------------------------------------------\n");
-	printArray(a);
+	printArray(a); //셸정렬된 배열 출력
 
 	return 0;
 }
 
+
+/*퀵 정렬
+ * 	가운데를 pivot으로 설정하여 부분집합 정렬
+ * 	이 함수에서는 마지막 원소를 pivot으로 설정함*/
 int quickSort(int *a, int n)
 {
 	int v, t;
 	int i, j;
 
-	if (n > 1)
+	if (n > 1)//배열의 크기가 1개 이상인 경우에만 작동
 	{
-		v = a[n-1];
+		v = a[n-1]; //pivot을 마지막인덱스로 설정
 		i = -1;
 		j = n - 1;
 
 		while(1)
 		{
-			while(a[++i] < v);
-			while(a[--j] > v);
+			while(a[++i] < v); //a[0]부터 왼쪽->오른쪽 이동
+			while(a[--j] > v); //a[n-2]부터오른쪽->왼쪽 이동
 
-			if (i >= j) break;
-			t = a[i];
-			a[i] = a[j];
+			if (i >= j) break; //i와j만나면 끝냄,
+			t = a[i]; // while문에 부합하지 않는 경우, a[i]>v이거나 a[j]<v인 경우
+			a[i] = a[j];//i와 j 교환
 			a[j] = t;
 		}
-		t = a[i];
+		t = a[i]; //j와 i가 만난 경우 i와 pivot교환
 		a[i] = a[n-1];
 		a[n-1] = t;
 
-		quickSort(a, i);
-		quickSort(a+i+1, n-i-1);
+		quickSort(a, i); // 왼쪽(pivot보다 작은 부분집합)
+		quickSort(a+i+1, n-i-1); //오른쪽 부분집합(pivot보다 큰 부분집합)으로 나누어 퀵정렬 반복
 	}
 
 
 	return 0;
 }
 
-int hashCode(int key) {
+
+/*해싱*/
+int hashCode(int key) { //division함수 사용
    return key % MAX_HASH_TABLE_SIZE;
 }
 
@@ -350,12 +356,12 @@ int hashing(int *a, int **ht)
 		hashtable = *ht;	/* hash table이 NULL이 아닌경우, table 재활용, reset to -1 */
 	}
 
-	for(int i = 0; i < MAX_HASH_TABLE_SIZE; i++)
+	for(int i = 0; i < MAX_HASH_TABLE_SIZE; i++) //hash table -1로 채우기
 		hashtable[i] = -1;
 
 	/*
 	for(int i = 0; i < MAX_HASH_TABLE_SIZE; i++)
-		printf("hashtable[%d] = %d\n", i, hashtable[i]);
+		printf("hashtable[%d] = %d\n", i, hashtable[i]); //hash테이블 내용 출력
 	*/
 
 	int key = -1;
@@ -364,43 +370,43 @@ int hashing(int *a, int **ht)
 	for (int i = 0; i < MAX_ARRAY_SIZE; i++)
 	{
 		key = a[i];
-		hashcode = hashCode(key);
+		hashcode = hashCode(key); //배열의 값 이용하여 hashfunction(hashCode)으로 hashcode얻음
 		/*
 		printf("key = %d, hashcode = %d, hashtable[%d]=%d\n", key, hashcode, hashcode, hashtable[hashcode]);
 		*/
-		if (hashtable[hashcode] == -1)
+		if (hashtable[hashcode] == -1) //해당 버켓이 비어있는 경우
 		{
-			hashtable[hashcode] = key;
-		} else 	{
+			hashtable[hashcode] = key; //버켓에 데이터 넣음
+		} else 	{ //collision&overflow발생
 
-			index = hashcode;
+			index = hashcode; //hashcode를 index로 할당하여 방 다시 찾기
 
-			while(hashtable[index] != -1)
+			while(hashtable[index] != -1) // 빈 슬롯 찾기
 			{
-				index = (++index) % MAX_HASH_TABLE_SIZE;
+				index = (++index) % MAX_HASH_TABLE_SIZE; //linear probing사용하여 빈 슬롯 있는지 조사
 				/*
 				printf("index = %d\n", index);
 				*/
 			}
-			hashtable[index] = key;
+			hashtable[index] = key; //해당 버켓에 데이터 넣음
 		}
 	}
 
 	return 0;
 }
 
-int search(int *ht, int key)
+int search(int *ht, int key) //해싱 사용하여 인덱스 찾기
 {
-	int index = hashCode(key);
+	int index = hashCode(key); //key의 해시코드를 index에 할당
 
-	if(ht[index] == key)
+	if(ht[index] == key) //해시테이블의 해당 index에 key값이 있는지 확인하여 있으면 index리턴
 		return index;
 
-	while(ht[++index] != key)
+	while(ht[++index] != key) //해시테이블 해당 index의 값이 key가 아닌 경우 collision&overflow발생했을 때 빈 슬롯 새로 찾은 공식으로 버켓 옮겨가면서 확인
 	{
 		index = index % MAX_HASH_TABLE_SIZE;
 	}
-	return index;
+	return index; //찾으면 해당 index값 리턴
 }
 
 
