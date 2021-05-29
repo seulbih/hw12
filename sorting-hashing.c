@@ -123,7 +123,7 @@ int main()
 	return 1;
 }
 
-int initialize(int** a)
+int initialize(int** a) //더블포인터
 {
 	int *temp = NULL;
 
@@ -132,7 +132,7 @@ int initialize(int** a)
 		temp = (int*)malloc(sizeof(int) * MAX_ARRAY_SIZE);
 		*a = temp;  /* 할당된 메모리의 주소를 복사 --> main에서 배열을 control 할수 있도록 함*/
 	} else
-		temp = *a;
+		temp = *a; //array가 NULL이 아닌 경우 temp가 배열 가리키도록 함
 
 	/* 랜덤값을 배열의 값으로 저장 */
 	for(int i = 0; i < MAX_ARRAY_SIZE; i++)
@@ -143,26 +143,31 @@ int initialize(int** a)
 
 int freeArray(int *a)
 {
-	if(a != NULL)
-		free(a);
+	if(a != NULL) //a가 NULL이 아닌 경우
+		free(a); //array에 할당된 메모리 해제
 	return 0;
 }
 
 void printArray(int *a)
 {
-	if (a == NULL) {
+	if (a == NULL) { //a가 NULL일 때, 빈 배열일 때 경고문구 출력
 		printf("nothing to print.\n");
 		return;
 	}
-	for(int i = 0; i < MAX_ARRAY_SIZE; i++)
+	//빈 배열이 아닌 경우
+	for(int i = 0; i < MAX_ARRAY_SIZE; i++) //인덱스번호 출력
 		printf("a[%02d] ", i);
 	printf("\n");
-	for(int i = 0; i < MAX_ARRAY_SIZE; i++)
+	for(int i = 0; i < MAX_ARRAY_SIZE; i++) //배열값 출력
 		printf("%5d ", a[i]);
 	printf("\n");
 }
 
 
+
+/*선택정렬
+ 	 주어진 리스트 중 최소값 찾아 맨 앞에 위치한 값과 교체
+ 	 맨 앞 값 제외하고 반복*/
 int selectionSort(int *a)
 {
 	int min;
@@ -172,29 +177,34 @@ int selectionSort(int *a)
 	printf("Selection Sort: \n");
 	printf("----------------------------------------------------------------\n");
 
-	printArray(a);
+	printArray(a); //기존배열 출력
 
 	for (i = 0; i < MAX_ARRAY_SIZE; i++)
 	{
-		minindex = i;
+		minindex = i; //첫번째 인덱스부터
 		min = a[i];
-		for(j = i+1; j < MAX_ARRAY_SIZE; j++)
+		for(j = i+1; j < MAX_ARRAY_SIZE; j++) //두번째인덱스~마지막인덱스 중 최솟값 찾기
 		{
-			if (min > a[j])
+			if (min > a[j]) //최솟값 찾아 min에 할당하고 인덱스 번호 저장
 			{
 				min = a[j];
 				minindex = j;
 			}
 		}
-		a[minindex] = a[i];
-		a[i] = min;
-	}
+		//Switch a[min]<->a[i]
+		a[minindex] = a[i]; //최솟값인덱스에 첫번째 인덱스 값 넣기
+		a[i] = min; //첫번째 인덱스에 최솟값 넣기
+	} //MAX_ARRAY_SIZE-1 까지 반복
 
 	printf("----------------------------------------------------------------\n");
-	printArray(a);
+	printArray(a); //선택정렬 후 배열 출력
 	return 0;
 }
 
+/*삽입정렬
+ 	 정렬되어있는 부분집합에 새로운 원소의 위치 찾아 삽입
+ 	 i와 i-1비교
+ 	 */
 int insertionSort(int *a)
 {
 	int i, j, t;
@@ -202,26 +212,30 @@ int insertionSort(int *a)
 	printf("Insertion Sort: \n");
 	printf("----------------------------------------------------------------\n");
 
-	printArray(a);
+	printArray(a); //기존배열 출력
 
-	for(i = 1; i < MAX_ARRAY_SIZE; i++)
+	for(i = 1; i < MAX_ARRAY_SIZE; i++) //s={a[0]}로 시작
 	{
-		t = a[i];
-		j = i;
-		while (a[j-1] > t && j > 0)
+		t = a[i];  //인덱스값 저장
+		j = i; //인덱스번호 저장
+		while (a[j-1] > t && j > 0) //바로 앞 인덱스와 비교연산, a[i-1]>a[i]인 경우 반복
 		{
-			a[j] = a[j-1];
+			a[j] = a[j-1]; //a[j]에 a[j-1] 넣고 j한칸 앞으로(i=1인 경우 j=1이므로 반복문 탈출)
 			j--;
 		}
-		a[j] = t;
+		a[j] = t; //a[j]에 기존값 저장(Switch)
 	}
 
 	printf("----------------------------------------------------------------\n");
-	printArray(a);
+	printArray(a); //삽입정렬 후 배열 출력
 
 	return 0;
 }
 
+/* 버블정렬
+	인접한 배열의 요소 비교, 교환
+	최댓값을 맨 뒤로 보내며 반복
+ * */
 int bubbleSort(int *a)
 {
 	int i, j, t;
@@ -229,26 +243,31 @@ int bubbleSort(int *a)
 	printf("Bubble Sort: \n");
 	printf("----------------------------------------------------------------\n");
 
-	printArray(a);
+	printArray(a); //정렬 전 배열 출력
 
 	for(i = 0; i < MAX_ARRAY_SIZE; i++)
 	{
 		for (j = 0; j < MAX_ARRAY_SIZE; j++)
 		{
-			if (a[j-1] > a[j])
+			if (a[j-1] > a[j]) //인접한 두 원소 비교, 앞 원소가 더 큰 경우
 			{
-				t = a[j-1];
+				t = a[j-1]; //작은 수가 앞으로 오도록 값 교환
 				a[j-1] = a[j];
 				a[j] = t;
 			}
-		}
-	}
+		}//가장 큰 수 맨 뒤로 옴
+	} //모두 정렬될 때까지 반복하며 큰 수 뒤로 보냄
 
 	printf("----------------------------------------------------------------\n");
-	printArray(a);
+	printArray(a); //버블정렬된 배열 출력
 
 	return 0;
 }
+
+/*셸 정렬
+ * Insertion Sort의 문제점 보완 (인접요소만 비교)
+ * 간격h 이용 (h=n/2) h=1될 때까지 반복
+ * */
 
 int shellSort(int *a)
 {
@@ -257,13 +276,13 @@ int shellSort(int *a)
 	printf("Shell Sort: \n");
 	printf("----------------------------------------------------------------\n");
 
-	printArray(a);
+	printArray(a); //정렬 전 배열 출력
 
-	for (h = MAX_ARRAY_SIZE/2; h > 0; h /= 2)
+	for (h = MAX_ARRAY_SIZE/2; h > 0; h /= 2) //h=n/2 (n=원소의 개수), h의 값을 반으로 감소시키면서 h가 1이 될 때까지 반복
 	{
-		for (i = 0; i < h; i++)
+		for (i = 0; i < h; i++) //h=n/2하여 두 개 원소 비교하므로 배열의 반절만 반복하면 됨
 		{
-			for(j = i + h; j < MAX_ARRAY_SIZE; j += h)
+			for(j = i + h; j < MAX_ARRAY_SIZE; j += h)//j한칸씩 이동하여 배열의 반이 되는 부분까지 감
 			{
 				v = a[j];
 				k = j;
