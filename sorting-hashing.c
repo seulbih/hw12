@@ -61,6 +61,7 @@ int main()
 		printf("----------------------------------------------------------------\n");
 
 		printf("Command = ");
+		fflush(stdout);
 		scanf(" %c", &command);
 
 		switch(command) {
@@ -102,6 +103,7 @@ int main()
 
 		case 'e': case 'E':
 			printf("Your Key = ");
+			fflush(stdout);
 			scanf("%d", &key);
 			printArray(hashtable);
 			index = search(hashtable, key);
